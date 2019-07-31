@@ -3,11 +3,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 
-const homeSvg = require('../../assets/images/RightPaneToolbar/home-52.svg'); // eslint-disable-line @typescript-eslint/no-var-requires
-const musicSvg = require('../../assets/images/RightPaneToolbar/ic_library_music_48px.svg'); // eslint-disable-line @typescript-eslint/no-var-requires
-const archiveSvg = require('../../assets/images/RightPaneToolbar/archive-2.svg'); // eslint-disable-line @typescript-eslint/no-var-requires
-const zoomSvg = require('../../assets/images/RightPaneToolbar/zoom-2.svg'); // eslint-disable-line @typescript-eslint/no-var-requires
-const gearSvg = require('../../assets/images/RightPaneToolbar/settings-gear-63.svg'); // eslint-disable-line @typescript-eslint/no-var-requires
+const homeSvg = require('../../assets/images/UserPanel/home-52.svg'); // eslint-disable-line @typescript-eslint/no-var-requires
+const musicSvg = require('../../assets/images/UserPanel/ic_library_music_48px.svg'); // eslint-disable-line @typescript-eslint/no-var-requires
+const archiveSvg = require('../../assets/images/UserPanel/archive-2.svg'); // eslint-disable-line @typescript-eslint/no-var-requires
+const zoomSvg = require('../../assets/images/UserPanel/zoom-2.svg'); // eslint-disable-line @typescript-eslint/no-var-requires
+const gearSvg = require('../../assets/images/UserPanel/settings-gear-63.svg'); // eslint-disable-line @typescript-eslint/no-var-requires
 
 const useStyles = makeStyles({
   root: {

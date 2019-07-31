@@ -7,12 +7,12 @@ const useStyles = makeStyles({
   root: {
     display: 'flex',
   },
-  leftPane: {
+  leftPanel: {
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'column',
   },
-  playerToolbar: {
+  controlPanel: {
     height: 100,
     backgroundImage: 'linear-gradient(to top, #361024 0%, #772020 100%)',
   },
@@ -23,11 +23,11 @@ export default function Main(): JSX.Element {
 
   return (
     <div className={classes.root}>
-      <div className={classes.leftPane}>
+      <div className={classes.leftPanel}>
         <div>
           <AudioContainer />
         </div>
-        <div className={classes.playerToolbar}>
+        <div className={classes.controlPanel}>
 
         </div>
       </div>
