@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  createStore,
-  combineReducers,
-  Store,
-  DeepPartial,
-} from 'redux';
+import { createStore, combineReducers, Store } from 'redux';
 import { Provider } from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
@@ -15,7 +10,7 @@ import {
 } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'; // eslint-disable-line import/no-extraneous-dependencies
 import CounterWithRedux from './CounterWithRedux';
-import counterReducer, { CountI } from '../../reducers/counter/counter';
+import counterReducer from '../../reducers/counter/counter';
 import { storeTypes } from '../../reducers/configureStore';
 
 interface WithReduxConfig {
@@ -23,11 +18,19 @@ interface WithReduxConfig {
   store?: Store<storeTypes>;
 }
 
+const rootReducer = combineReducers({
+  counterReducer,
+});
+
+interface RenderWithReduxI extends RenderResult {
+  store: Store;
+}
+
 const renderWithRedux = (
   ui: JSX.Element,
-  { initialState, store = createStore(counterReducer, initialState as DeepPartial<CountI>) }:
+  { initialState, store = createStore(rootReducer, initialState) }:
   WithReduxConfig = {},
-): { [renderOptions]: RenderResult; store: Store } => ({
+): RenderWithReduxI => ({
   ...render(<Provider store={store}>{ui}</Provider>),
   store,
 });
@@ -35,31 +38,21 @@ const renderWithRedux = (
 describe('Counter.tsx', (): void => {
   afterEach(cleanup);
 
-  test('render toHaveTextContent "點了 0 下"', (): void => {
-    const rootReducer = combineReducers({
-      counterReducer,
-    });
-    const store = createStore(rootReducer, {
-      counterReducer: {
-        count: 2,
-      },
-    });
-    // const { getByTestId } = render(
-    //   <Provider store={store}>
-    //     <CounterWithRedux />
-    //   </Provider>,
-    // );
+  test('render toHaveTextContent "點了 2 下"', (): void => {
     const { getByTestId } = renderWithRedux(
-      <CounterWithRedux />,
+      <CounterWithRedux />, {
+        initialState: {
+          counterReducer: {
+            count: 2,
+          },
+        },
+      },
     );
 
     expect(getByTestId('display-count')).toHaveTextContent('點了 2 下');
   });
 
   test('click add 1 button', (): void => {
-    const rootReducer = combineReducers({
-      counterReducer,
-    });
     const store = createStore(rootReducer, {
       counterReducer: {
         count: 2,
@@ -76,9 +69,6 @@ describe('Counter.tsx', (): void => {
   });
 
   test('click add 2 button', (): void => {
-    const rootReducer = combineReducers({
-      counterReducer,
-    });
     const store = createStore(rootReducer, {
       counterReducer: {
         count: 2,
@@ -95,9 +85,6 @@ describe('Counter.tsx', (): void => {
   });
 
   test('click add 2 button', (): void => {
-    const rootReducer = combineReducers({
-      counterReducer,
-    });
     const store = createStore(rootReducer, {
       counterReducer: {
         count: 2,
