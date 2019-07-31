@@ -1,10 +1,36 @@
 import React from 'react';
-import { createStore, combineReducers } from 'redux';
+import {
+  createStore,
+  combineReducers,
+  Store,
+  DeepPartial,
+} from 'redux';
 import { Provider } from 'react-redux';
-import { render, fireEvent, cleanup } from '@testing-library/react'; // eslint-disable-line import/no-extraneous-dependencies
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {
+  render,
+  fireEvent,
+  cleanup,
+  RenderResult,
+} from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'; // eslint-disable-line import/no-extraneous-dependencies
 import CounterWithRedux from './CounterWithRedux';
-import counterReducer from '../../reducers/counter/counter';
+import counterReducer, { CountI } from '../../reducers/counter/counter';
+import { storeTypes } from '../../reducers/configureStore';
+
+interface WithReduxConfig {
+  initialState?: storeTypes;
+  store?: Store<storeTypes>;
+}
+
+const renderWithRedux = (
+  ui: JSX.Element,
+  { initialState, store = createStore(counterReducer, initialState as DeepPartial<CountI>) }:
+  WithReduxConfig = {},
+): { [renderOptions]: RenderResult; store: Store } => ({
+  ...render(<Provider store={store}>{ui}</Provider>),
+  store,
+});
 
 describe('Counter.tsx', (): void => {
   afterEach(cleanup);
@@ -18,10 +44,13 @@ describe('Counter.tsx', (): void => {
         count: 2,
       },
     });
-    const { getByTestId } = render(
-      <Provider store={store}>
-        <CounterWithRedux />
-      </Provider>,
+    // const { getByTestId } = render(
+    //   <Provider store={store}>
+    //     <CounterWithRedux />
+    //   </Provider>,
+    // );
+    const { getByTestId } = renderWithRedux(
+      <CounterWithRedux />,
     );
 
     expect(getByTestId('display-count')).toHaveTextContent('點了 2 下');
