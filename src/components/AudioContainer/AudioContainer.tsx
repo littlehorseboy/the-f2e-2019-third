@@ -4,7 +4,7 @@ const mp3 = require('../../assets/mp3/Splashing_Around.mp3'); // eslint-disable-
 
 export default function AudioContainer(): JSX.Element {
   return (
-    <audio data-testid="root-test" src={mp3} controls>
+    <audio data-testid="audio" src={mp3} controls>
       <track kind="captions" srcLang="en" label="english_captions" />
     </audio>
   );

@@ -8,21 +8,21 @@ describe('AudioContainer.tsx', (): void => {
 
   test('<audio> tagName === "AUDIO"', (): void => {
     const { getByTestId } = render(<AudioContainer />);
-    expect((getByTestId('root-test') as HTMLAudioElement).tagName === 'AUDIO');
+    expect((getByTestId('audio') as HTMLAudioElement).tagName === 'AUDIO');
   });
 
   test('<audio> autoplay === false', (): void => {
     const { getByTestId } = render(<AudioContainer />);
-    expect((getByTestId('root-test') as HTMLAudioElement).autoplay === false);
+    expect((getByTestId('audio') as HTMLAudioElement).autoplay === false);
   });
 
   test('<audio> includes <track kind="captions"', (): void => {
     const { getByTestId } = render(<AudioContainer />);
-    expect((getByTestId('root-test') as HTMLAudioElement).innerHTML.includes('<track kind="captions"'));
+    expect((getByTestId('audio') as HTMLAudioElement).innerHTML.includes('<track kind="captions"'));
   });
 
   test('<audio> toBeInTheDocument', (): void => {
     const { getByTestId } = render(<AudioContainer />);
-    expect((getByTestId('root-test') as HTMLAudioElement)).toBeInTheDocument();
+    expect((getByTestId('audio') as HTMLAudioElement)).toBeInTheDocument();
   });
 });
