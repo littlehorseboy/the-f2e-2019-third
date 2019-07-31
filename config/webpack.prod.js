@@ -19,6 +19,7 @@ module.exports = merge(common, {
             loader: 'babel-loader',
             options: {
               envName: 'production',
+              // plugins: ['react-remove-properties'],
             },
           },
           {
