@@ -42,7 +42,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function RightPaneToolbar(): JSX.Element {
+export default function UserPanel(): JSX.Element {
   const classes = useStyles();
 
   return (

@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AudioContainer from '../../components/AudioContainer/AudioContainer';
-import RightPaneToolbar from '../../components/RightPaneToolbar/RightPaneToolbar';
+import UserPanel from '../../components/UserPanel/UserPanel';
 
 const useStyles = makeStyles({
   root: {
@@ -32,7 +32,7 @@ export default function Main(): JSX.Element {
         </div>
       </div>
 
-      <RightPaneToolbar />
+      <UserPanel />
     </div>
   );
 }
