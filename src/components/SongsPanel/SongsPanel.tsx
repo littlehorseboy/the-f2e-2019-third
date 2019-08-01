@@ -50,7 +50,9 @@ const useStyles = makeStyles({
     },
   },
   songList: {
-
+    '& th, td': {
+      borderBottom: '1px solid #707070',
+    },
   },
   colorWhite: {
     color: '#FFFFFF',
