@@ -28,7 +28,7 @@ const useStyles = makeStyles({
     paddingTop: 50,
   },
   betweenBottom: {
-    minHeight: 140,
+    minHeight: 170,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
