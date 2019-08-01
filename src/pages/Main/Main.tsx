@@ -5,7 +5,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import MusicNoteIcon from '@material-ui/icons/MusicNote';
+import SongsPanel from '../../components/SongsPanel/SongsPanel';
 import AudioContainer from '../../components/AudioContainer/AudioContainer';
 import UserPanel from '../../components/UserPanel/UserPanel';
 
@@ -26,31 +26,9 @@ const useStyles = makeStyles({
   },
   artistPanel: {
     flexBasis: '35%',
-    backgroundImage: `url(${img})`,
+    // backgroundImage: `url(${img})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-  },
-  songsPanel: {
-    flexGrow: 1,
-    color: '#FFFFFF',
-    backgroundColor: '#1A1A1A',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  musicNoteIcon: {
-    color: '#964A4D',
-  },
-  songTitle: {
-    height: 300,
-  },
-  songList: {
-    flexGrow: 1,
-    flexBasis: 'auto',
-    overflowY: 'auto',
-    height: 0,
-  },
-  colorWhite: {
-    color: '#FFFFFF',
   },
   controlPanel: {
     height: 100,
@@ -68,108 +46,8 @@ export default function Main(): JSX.Element {
           <div className={classes.artistPanel}>
 
           </div>
-          <div className={classes.songsPanel}>
-            <div className={classes.songTitle}>
 
-            </div>
-
-            <div className={classes.songList}>
-              <Table>
-                <TableHead>
-                  <TableRow hover>
-                    <TableCell className={classes.colorWhite} align="left"></TableCell>
-                    <TableCell className={classes.colorWhite} align="left">Calories</TableCell>
-                    <TableCell className={classes.colorWhite} align="left">Fat&nbsp;(g)</TableCell>
-                    <TableCell className={classes.colorWhite} align="right">Carbs&nbsp;(g)</TableCell>
-                    <TableCell className={classes.colorWhite} align="center">Protein&nbsp;(g)</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow hover>
-                    <TableCell className={classes.colorWhite} align="left">
-                      <MusicNoteIcon className={classes.musicNoteIcon} />
-                    </TableCell>
-                    <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-                    <TableCell className={classes.colorWhite} align="left">fat</TableCell>
-                    <TableCell className={classes.colorWhite} align="right">carbs</TableCell>
-                    <TableCell className={classes.colorWhite} align="center">protein</TableCell>
-                  </TableRow>
-                  <TableRow hover>
-                    <TableCell className={classes.colorWhite} align="left">
-                      <MusicNoteIcon className={classes.musicNoteIcon} />
-                    </TableCell>
-                    <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-                    <TableCell className={classes.colorWhite} align="left">fat</TableCell>
-                    <TableCell className={classes.colorWhite} align="right">carbs</TableCell>
-                    <TableCell className={classes.colorWhite} align="center">protein</TableCell>
-                  </TableRow>
-                  <TableRow hover>
-                    <TableCell className={classes.colorWhite} align="left">
-                      <MusicNoteIcon className={classes.musicNoteIcon} />
-                    </TableCell>
-                    <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-                    <TableCell className={classes.colorWhite} align="left">fat</TableCell>
-                    <TableCell className={classes.colorWhite} align="right">carbs</TableCell>
-                    <TableCell className={classes.colorWhite} align="center">protein</TableCell>
-                  </TableRow>
-                  <TableRow hover>
-                    <TableCell className={classes.colorWhite} align="left">
-                      <MusicNoteIcon className={classes.musicNoteIcon} />
-                    </TableCell>
-                    <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-                    <TableCell className={classes.colorWhite} align="left">fat</TableCell>
-                    <TableCell className={classes.colorWhite} align="right">carbs</TableCell>
-                    <TableCell className={classes.colorWhite} align="center">protein</TableCell>
-                  </TableRow>
-                  <TableRow hover>
-                    <TableCell className={classes.colorWhite} align="left">
-                      <MusicNoteIcon className={classes.musicNoteIcon} />
-                    </TableCell>
-                    <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-                    <TableCell className={classes.colorWhite} align="left">fat</TableCell>
-                    <TableCell className={classes.colorWhite} align="right">carbs</TableCell>
-                    <TableCell className={classes.colorWhite} align="center">protein</TableCell>
-                  </TableRow>
-                  <TableRow hover>
-                    <TableCell className={classes.colorWhite} align="left">
-                      <MusicNoteIcon className={classes.musicNoteIcon} />
-                    </TableCell>
-                    <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-                    <TableCell className={classes.colorWhite} align="left">fat</TableCell>
-                    <TableCell className={classes.colorWhite} align="right">carbs</TableCell>
-                    <TableCell className={classes.colorWhite} align="center">protein</TableCell>
-                  </TableRow>
-                  <TableRow hover>
-                    <TableCell className={classes.colorWhite} align="left">
-                      <MusicNoteIcon className={classes.musicNoteIcon} />
-                    </TableCell>
-                    <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-                    <TableCell className={classes.colorWhite} align="left">fat</TableCell>
-                    <TableCell className={classes.colorWhite} align="right">carbs</TableCell>
-                    <TableCell className={classes.colorWhite} align="center">protein</TableCell>
-                  </TableRow>
-                  <TableRow hover>
-                    <TableCell className={classes.colorWhite} align="left">
-                      <MusicNoteIcon className={classes.musicNoteIcon} />
-                    </TableCell>
-                    <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-                    <TableCell className={classes.colorWhite} align="left">fat</TableCell>
-                    <TableCell className={classes.colorWhite} align="right">carbs</TableCell>
-                    <TableCell className={classes.colorWhite} align="center">protein</TableCell>
-                  </TableRow>
-                  <TableRow hover>
-                    <TableCell className={classes.colorWhite} align="left">
-                      <MusicNoteIcon className={classes.musicNoteIcon} />
-                    </TableCell>
-                    <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-                    <TableCell className={classes.colorWhite} align="left">fat</TableCell>
-                    <TableCell className={classes.colorWhite} align="right">carbs</TableCell>
-                    <TableCell className={classes.colorWhite} align="center">protein</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </div>
-          </div>
+          <SongsPanel />
         </div>
 
         <div className={classes.controlPanel}>
