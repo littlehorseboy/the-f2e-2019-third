@@ -1,5 +1,11 @@
 import songsInitState from './songsInitState';
-import { songsActionTypes, TOGGLE_ARTIST_FOLLWER, SET_CURRENTARTISTID } from '../../actions/songs/songs';
+import {
+  songsActionTypes,
+  TOGGLE_ARTIST_FOLLWER,
+  SET_CURRENTARTISTID,
+  SET_CURRENTALBUMID,
+  SET_CURRENTSONGID,
+} from '../../actions/songs/songs';
 
 export interface ArtistI {
   artistId: number;
@@ -52,6 +58,16 @@ const reducer = (state = initState, action: songsActionTypes): SongsI => {
       return {
         ...state,
         currentArtistId: action.payload.artistId,
+      };
+    case SET_CURRENTALBUMID:
+      return {
+        ...state,
+        currentAlbumId: action.payload.albumId,
+      };
+    case SET_CURRENTSONGID:
+      return {
+        ...state,
+        currentSongId: action.payload.songId,
       };
     case TOGGLE_ARTIST_FOLLWER:
       return {

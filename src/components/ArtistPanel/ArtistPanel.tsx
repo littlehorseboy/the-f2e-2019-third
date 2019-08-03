@@ -6,7 +6,13 @@ import IconButton from '@material-ui/core/IconButton';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import { storeTypes } from '../../reducers/configureStore';
 import { SongsI, ArtistI } from '../../reducers/songs/songs';
-import { toggleArtistFollower, setCurrentArtistId } from '../../actions/songs/songs';
+import {
+  toggleArtistFollower,
+  setCurrentArtistId,
+  setCurrentAlbumtId,
+  setCurrentSongId,
+} from '../../actions/songs/songs';
+import { audioPlay } from '../../actions/audio/audio';
 
 const useStyles = makeStyles({
   artistPanel: {
@@ -70,15 +76,29 @@ export default function ArtistPanel(): JSX.Element {
   const dispatch = useDispatch();
 
   const findArtist = songs.artist.find((artist): ArtistI => artist);
+  const findAlbum = songs.album
+    .find((album): boolean => album.artistId === (findArtist ? findArtist.artistId : null));
+  const findSong = songs.songs
+    .find((song): boolean => song.songId === (findAlbum ? findAlbum.albumId : null));
 
   useEffect((): void => {
     if (findArtist) {
       dispatch(setCurrentArtistId(findArtist.artistId));
     }
-  });
+    if (findAlbum) {
+      dispatch(setCurrentAlbumtId(findAlbum.albumId));
+    }
+    if (findSong) {
+      dispatch(setCurrentSongId(findSong.songId));
+    }
+  }, [songs.currentArtistId]);
 
   const handleToggleArtistFollower = (): void => {
     dispatch(toggleArtistFollower(1));
+  };
+
+  const handlePlayFirstSong = (): void => {
+    dispatch(audioPlay());
   };
 
   return (
@@ -109,7 +129,14 @@ export default function ArtistPanel(): JSX.Element {
             </Button>
           </div>
           <div>
-            <Button variant="contained" color="primary" className={classes.playButton}>PLAY</Button>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.playButton}
+              onClick={handlePlayFirstSong}
+            >
+              PLAY
+            </Button>
           </div>
         </div>
       </div>
