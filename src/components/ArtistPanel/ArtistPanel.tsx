@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import DashboardIcon from '@material-ui/icons/Dashboard';
-
-const img = require('../../assets/images/astist_photo.png'); // eslint-disable-line @typescript-eslint/no-var-requires
+import { storeTypes } from '../../reducers/configureStore';
+import { SongsI, ArtistI } from '../../reducers/songs/songs';
+import { toggleArtistFollower, setCurrentArtistId } from '../../actions/songs/songs';
 
 const useStyles = makeStyles({
   artistPanel: {
     color: '#FFFFFF',
     flexBasis: '35%',
-    backgroundImage: `url(${img})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     display: 'flex',
@@ -59,11 +60,31 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Main(): JSX.Element {
+export default function ArtistPanel(): JSX.Element {
   const classes = useStyles();
 
+  const songs = useSelector((
+    state: storeTypes,
+  ): SongsI => state.songsReducer);
+
+  const dispatch = useDispatch();
+
+  const findArtist = songs.artist.find((artist): ArtistI => artist);
+
+  useEffect((): void => {
+    if (findArtist) {
+      dispatch(setCurrentArtistId(findArtist.artistId));
+    }
+  });
+
+  const handleToggleArtistFollower = (): void => {
+    dispatch(toggleArtistFollower(1));
+  };
+
   return (
-    <div className={classes.artistPanel}>
+    <div className={classes.artistPanel} style={{
+      backgroundImage: findArtist ? `url(${findArtist.artistPhotoPath})` : '',
+    }}>
       <div className={classes.dashboardContainer}>
         <IconButton aria-label="Dashboard">
           <DashboardIcon fontSize="large" className={classes.icon} />
@@ -71,14 +92,21 @@ export default function Main(): JSX.Element {
       </div>
       <div className={classes.artistContainer}>
         <div>ARTIST</div>
-        <div>ED SHEERAN</div>
+        <div>{findArtist && findArtist.artistName}</div>
         <div>
           <div>
-            <div>252,134</div>
+            <div>{findArtist && findArtist.followers.toLocaleString()}</div>
             <div>Follwers</div>
           </div>
           <div>
-            <Button variant="outlined" color="primary" className={classes.followButton}>FOLLOWING</Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              className={classes.followButton}
+              onClick={handleToggleArtistFollower}
+            >
+              FOLLOWING
+            </Button>
           </div>
           <div>
             <Button variant="contained" color="primary" className={classes.playButton}>PLAY</Button>

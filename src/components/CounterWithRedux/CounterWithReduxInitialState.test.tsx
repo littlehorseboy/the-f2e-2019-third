@@ -13,9 +13,20 @@ import CounterWithRedux from './CounterWithRedux';
 import counterReducer from '../../reducers/counter/counter';
 import { storeTypes } from '../../reducers/configureStore';
 
+interface StoreTypes {
+  counterReducer: {
+    count: number;
+  };
+}
+
+
 interface WithReduxConfig {
-  initialState?: storeTypes;
-  store?: Store<storeTypes>;
+  initialState?: {
+    counterReducer: {
+      count: number;
+    };
+  };
+  store?: Store<StoreTypes>;
 }
 
 const rootReducer = combineReducers({
