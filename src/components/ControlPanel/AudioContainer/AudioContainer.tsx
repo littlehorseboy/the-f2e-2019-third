@@ -24,12 +24,30 @@ const useStyles = makeStyles({
   },
 });
 
-const mp3 = require('../../../assets/mp3/Splashing_Around.mp3'); // eslint-disable-line @typescript-eslint/no-var-requires
+interface PropsI {
+  setPlaybackProgressValue: React.Dispatch<React.SetStateAction<number | number[]>>;
+  setPlaybackProgressMaxValue: React.Dispatch<React.SetStateAction<number | number[]>>;
+}
 
-export default function AudioContainer(): JSX.Element {
+export default function AudioContainer(props: PropsI): JSX.Element {
   const classes = useStyles();
 
   const audioEl = useRef<HTMLAudioElement | null>(null);
+
+  useEffect((): void => {
+    if (audioEl) {
+      (audioEl.current as HTMLAudioElement).addEventListener('loadedmetadata', (event): void => {
+        props.setPlaybackProgressMaxValue(
+          Math.floor((event.target as HTMLMediaElement).duration),
+        );
+      });
+      (audioEl.current as HTMLAudioElement).addEventListener('timeupdate', (event): void => {
+        props.setPlaybackProgressValue(
+          Math.floor((event.target as HTMLMediaElement).currentTime),
+        );
+      });
+    }
+  }, [audioEl]);
 
   const songs = useSelector((
     state: storeTypes,
@@ -54,7 +72,6 @@ export default function AudioContainer(): JSX.Element {
       const findSong = songs.songs
         .find((song): boolean => song.songId === songs.currentSongId);
       (audioEl.current as HTMLAudioElement).src = findSong ? findSong.path : '';
-      (audioEl.current as HTMLAudioElement).play();
     }
   }, [songs.currentSongId]);
 
@@ -70,7 +87,7 @@ export default function AudioContainer(): JSX.Element {
 
   return (
     <>
-      <audio ref={audioEl} data-testid="audio" src={mp3}>
+      <audio ref={audioEl} data-testid="audio">
         <track kind="captions" srcLang="en" label="english_captions" />
       </audio>
 

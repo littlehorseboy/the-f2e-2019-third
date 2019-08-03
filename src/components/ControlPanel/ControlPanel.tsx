@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Slider from '@material-ui/core/Slider';
@@ -107,14 +107,15 @@ const useStyles = makeStyles({
 export default function ControlPanel(): JSX.Element {
   const classes = useStyles();
 
-  const [playbackProgressValue, setplaybackProgressValue] = React.useState<number | number[]>(30);
-  const [volumeValue, setVolumeValue] = React.useState<number | number[]>(30);
+  const [playbackProgressValue, setPlaybackProgressValue] = useState<number | number[]>(0);
+  const [playbackProgressMaxValue, setPlaybackProgressMaxValue] = useState<number | number[]>(0);
+  const [volumeValue, setVolumeValue] = useState<number | number[]>(30);
 
   const handlePlaybackProgressSliderChange = (
     event: React.ChangeEvent<{}>,
     newValue: number | number[],
   ): void => {
-    setplaybackProgressValue(newValue);
+    setPlaybackProgressValue(newValue);
   };
 
   const handleVolumeSliderChange = (
@@ -130,12 +131,21 @@ export default function ControlPanel(): JSX.Element {
         <PlaybackProgressBar
           color="secondary"
           value={playbackProgressValue}
+          max={playbackProgressMaxValue as number}
           onChange={handlePlaybackProgressSliderChange}
         />
       </div>
       <div className={classes.progressTimeText}>
-        <div>3:38</div>
-        <div>3:39</div>
+        <div>
+          {Math.floor((playbackProgressValue as number) / 60).toString().padStart(2, '0')}
+          :
+          {((playbackProgressValue as number) % 60).toString().padStart(2, '0')}
+        </div>
+        <div>
+          {Math.floor((playbackProgressMaxValue as number) / 60).toString().padStart(2, '0')}
+          :
+          {((playbackProgressMaxValue as number) % 60).toString().padStart(2, '0')}
+        </div>
       </div>
       <div className={classes.playerContainer}>
         <div className={classes.playerTitleContainer}>
@@ -146,7 +156,10 @@ export default function ControlPanel(): JSX.Element {
           </div>
         </div>
 
-        <AudioContainer />
+        <AudioContainer
+          setPlaybackProgressValue={setPlaybackProgressValue}
+          setPlaybackProgressMaxValue={setPlaybackProgressMaxValue}
+        />
 
         <div className={classes.volumeContainer}>
           <div>

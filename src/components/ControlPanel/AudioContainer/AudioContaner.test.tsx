@@ -7,22 +7,34 @@ describe('AudioContainer.tsx', (): void => {
   afterEach(cleanup);
 
   test('<audio> tagName === "AUDIO"', (): void => {
-    const { getByTestId } = render(<AudioContainer />);
+    const { getByTestId } = render(<AudioContainer
+      setPlaybackProgressValue={jest.fn()}
+      setPlaybackProgressMaxValue={jest.fn()}
+    />);
     expect((getByTestId('audio') as HTMLAudioElement).tagName === 'AUDIO');
   });
 
   test('<audio> autoplay === false', (): void => {
-    const { getByTestId } = render(<AudioContainer />);
+    const { getByTestId } = render(<AudioContainer
+      setPlaybackProgressValue={jest.fn()}
+      setPlaybackProgressMaxValue={jest.fn()}
+    />);
     expect((getByTestId('audio') as HTMLAudioElement).autoplay === false);
   });
 
   test('<audio> includes <track kind="captions"', (): void => {
-    const { getByTestId } = render(<AudioContainer />);
+    const { getByTestId } = render(<AudioContainer
+      setPlaybackProgressValue={jest.fn()}
+      setPlaybackProgressMaxValue={jest.fn()}
+    />);
     expect((getByTestId('audio') as HTMLAudioElement).innerHTML.includes('<track kind="captions"'));
   });
 
   test('<audio> toBeInTheDocument', (): void => {
-    const { getByTestId } = render(<AudioContainer />);
+    const { getByTestId } = render(<AudioContainer
+      setPlaybackProgressValue={jest.fn()}
+      setPlaybackProgressMaxValue={jest.fn()}
+    />);
     expect((getByTestId('audio') as HTMLAudioElement)).toBeInTheDocument();
   });
 });
