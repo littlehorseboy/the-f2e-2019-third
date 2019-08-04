@@ -17,6 +17,7 @@ export interface ArtistI {
 interface AlbumI {
   albumId: number;
   albumName: string;
+  albumPhotoPath: string;
   released: Date;
   artistId: number;
 }

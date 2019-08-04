@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Slider from '@material-ui/core/Slider';
 import VolumeUpIcon from '@material-ui/icons/VolumeUp';
 import VolumeOffIcon from '@material-ui/icons/VolumeOff';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 import AudioContainer from './AudioContainer/AudioContainer';
+import { storeTypes } from '../../reducers/configureStore';
+import { SongsI } from '../../reducers/songs/songs';
 
 const songPhoto = require('../../assets/images/Ed_Sheeran_-_No._6_Collaborations_Project.png'); // eslint-disable-line @typescript-eslint/no-var-requires
 
@@ -79,6 +83,7 @@ const useStyles = makeStyles({
   },
   playerTitleContainer: {
     display: 'flex',
+    minWidth: 310,
     '& > img': {
       maxWidth: 48,
       maxHeight: 48,
@@ -95,6 +100,8 @@ const useStyles = makeStyles({
   volumeContainer: {
     color: '#FFFFFF',
     display: 'flex',
+    minWidth: 310,
+    justifyContent: 'flex-end',
     alignItems: 'center',
     '& > div > button > span > svg': {
       fontSize: '1.8rem',
@@ -113,6 +120,20 @@ export default function ControlPanel(): JSX.Element {
   const [playbackProgressMaxValue, setPlaybackProgressMaxValue] = useState<number | number[]>(0);
   const [volumeValue, setVolumeValue] = useState<number | number[]>(0.5);
   const [muted, setMuted] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+
+  const songs = useSelector((
+    state: storeTypes,
+  ): SongsI => state.songsReducer);
+
+  const findSong = songs.songs
+    .find((song): boolean => song.songId === songs.currentSongId);
+
+  const findAlbum = songs.album
+    .find((album): boolean => album.albumId === (findSong ? findSong.albumId : null));
+
+  const findArtist = songs.artist
+    .find((artist): boolean => artist.artistId === (findAlbum ? findAlbum.artistId : null));
 
   const handlePlaybackProgressSliderChange = (
     event: React.ChangeEvent<{}>,
@@ -137,6 +158,10 @@ export default function ControlPanel(): JSX.Element {
 
   const handleChangeMuted = (): void => {
     setMuted(!muted);
+  };
+
+  const hanldeChangeIsLiked = (): void => {
+    setIsLiked(!isLiked);
   };
 
   return (
@@ -166,8 +191,8 @@ export default function ControlPanel(): JSX.Element {
         <div className={classes.playerTitleContainer}>
           <img src={songPhoto} alt="songPhoto" />
           <div>
-            <div>I Don’t Care</div>
-            <div>Ed Sheehan (with Justin Bieber)</div>
+            <div>{findSong ? findSong.songName : ''}</div>
+            <div>{findArtist ? findArtist.artistName : ''}</div>
           </div>
         </div>
 
@@ -197,8 +222,10 @@ export default function ControlPanel(): JSX.Element {
           </div>
 
           <div>
-            <IconButton aria-label="Dashboard" color="inherit">
-              <FavoriteBorderOutlinedIcon />
+            <IconButton aria-label="Dashboard" color="inherit" onClick={hanldeChangeIsLiked}>
+              {isLiked
+                ? <FavoriteIcon />
+                : <FavoriteBorderOutlinedIcon />}
             </IconButton>
           </div>
         </div>

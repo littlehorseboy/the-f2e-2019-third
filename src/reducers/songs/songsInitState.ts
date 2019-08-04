@@ -5,13 +5,13 @@ const initState = {
   artist: [
     {
       artistId: 1,
-      artistName: 'ED SHEERAN',
+      artistName: 'Ed Sheeran',
       artistPhotoPath: pathToArtistPhotos('./artist_photo.png'),
       followers: 252134,
     },
     {
       artistId: 2,
-      artistName: 'TYSON',
+      artistName: 'Tyson',
       artistPhotoPath: '',
       followers: 13579,
     },
@@ -20,6 +20,7 @@ const initState = {
     {
       albumId: 1,
       albumName: 'No.6 Collaborations Project',
+      albumPhotoPath: '',
       released: new Date(2019, 6, 12),
       artistId: 1,
     },

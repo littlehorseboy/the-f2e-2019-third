@@ -36,6 +36,8 @@ interface PropsI {
 export default function AudioContainer(props: PropsI): JSX.Element {
   const classes = useStyles();
 
+  const [playMode, setPlayMode] = useState<'classic' | 'shuffle' | 'repeat'>('classic');
+
   const previousCurrentSongIdRef = useRef<null | number>(null);
   const nextCurrentSongIdRef = useRef<null | number>(null);
 
@@ -43,7 +45,7 @@ export default function AudioContainer(props: PropsI): JSX.Element {
 
   const audioEl = useRef<HTMLAudioElement | null>(null);
 
-  (window as any).audioEl = audioEl;
+  // (window as any).audioEl = audioEl;
 
   useEffect((): void => {
     if (audioEl) {
@@ -56,6 +58,42 @@ export default function AudioContainer(props: PropsI): JSX.Element {
       (audioEl.current as HTMLAudioElement).muted = props.muted;
     }
   }, [props.muted]);
+
+  const songs = useSelector((
+    state: storeTypes,
+  ): SongsI => state.songsReducer);
+
+  const setNextAndPreviousSongId = (): void => {
+    if (songs.currentSongId) {
+      const findSong = songs.songs
+        .find((song): boolean => song.songId === songs.currentSongId);
+
+      // 填下一首的 songId 進 nextCurrentSongIdRef
+      let findNextSong = songs.songs
+        .filter((song): boolean => song.albumId === songs.currentAlbumId)
+        .find((song): boolean => song.songId === (findSong ? findSong.songId + 1 : null));
+      if (!findNextSong) {
+        [findNextSong] = songs.songs
+          .filter((song): boolean => song.albumId === songs.currentAlbumId);
+      }
+
+      if (findNextSong) {
+        nextCurrentSongIdRef.current = findNextSong.songId;
+      }
+
+      // 填上一首的 songId 進 previousCurrentSongIdRef
+      let findPreviousSong = songs.songs
+        .filter((song): boolean => song.albumId === songs.currentAlbumId)
+        .find((song): boolean => song.songId === (findSong ? findSong.songId + -1 : null));
+      if (!findPreviousSong) {
+        [findPreviousSong] = songs.songs.slice(-1);
+      }
+
+      if (findPreviousSong) {
+        previousCurrentSongIdRef.current = findPreviousSong.songId;
+      }
+    }
+  };
 
   useEffect((): void => {
     if (audioEl) {
@@ -87,10 +125,6 @@ export default function AudioContainer(props: PropsI): JSX.Element {
     }
   }, [props.sliderChangeProgressValue]);
 
-  const songs = useSelector((
-    state: storeTypes,
-  ): SongsI => state.songsReducer);
-
   const audioStatus = useSelector((
     state: storeTypes,
   ): 'paused' | 'playing' | 'stopped' => state.audioReducer.audioStatus);
@@ -111,30 +145,7 @@ export default function AudioContainer(props: PropsI): JSX.Element {
         .find((song): boolean => song.songId === songs.currentSongId);
       (audioEl.current as HTMLAudioElement).src = findSong ? findSong.path : '';
 
-      // 填下一首的 songId 進 nextCurrentSongIdRef
-      let findNextSong = songs.songs
-        .filter((song): boolean => song.albumId === songs.currentAlbumId)
-        .find((song): boolean => song.songId === (findSong ? findSong.songId + 1 : null));
-      if (!findNextSong) {
-        [findNextSong] = songs.songs
-          .filter((song): boolean => song.albumId === songs.currentAlbumId);
-      }
-
-      if (findNextSong) {
-        nextCurrentSongIdRef.current = findNextSong.songId;
-      }
-
-      // 填上一首的 songId 進 previousCurrentSongIdRef
-      let findPreviousSong = songs.songs
-        .filter((song): boolean => song.albumId === songs.currentAlbumId)
-        .find((song): boolean => song.songId === (findSong ? findSong.songId + -1 : null));
-      if (!findPreviousSong) {
-        [findPreviousSong] = songs.songs.slice(-1);
-      }
-
-      if (findPreviousSong) {
-        previousCurrentSongIdRef.current = findPreviousSong.songId;
-      }
+      setNextAndPreviousSongId();
     }
   }, [songs.currentSongId]);
 
@@ -170,6 +181,22 @@ export default function AudioContainer(props: PropsI): JSX.Element {
     }
   };
 
+  const handleChangeShuffleMode = (): void => {
+    if (playMode === 'shuffle') {
+      setPlayMode('classic');
+    } else {
+      setPlayMode('shuffle');
+    }
+  };
+
+  const handleChangeRepeatMode = (): void => {
+    if (playMode === 'repeat') {
+      setPlayMode('classic');
+    } else {
+      setPlayMode('repeat');
+    }
+  };
+
   return (
     <>
       <audio ref={audioEl} data-testid="audio">
@@ -178,7 +205,11 @@ export default function AudioContainer(props: PropsI): JSX.Element {
 
       <div className={classes.root}>
         <div>
-          <IconButton color="inherit">
+          <IconButton
+            color="inherit"
+            style={{ backgroundColor: playMode === 'shuffle' ? 'rgba(150, 74, 77, 0.3)' : '' }}
+            onClick={handleChangeShuffleMode}
+          >
             <ShuffleIcon />
           </IconButton>
           <IconButton color="inherit" onClick={handleSkipPreviousSong}>
@@ -194,7 +225,11 @@ export default function AudioContainer(props: PropsI): JSX.Element {
           <IconButton color="inherit" onClick={handleSkipNextSong}>
             <SkipNextIcon />
           </IconButton>
-          <IconButton color="inherit">
+          <IconButton
+            color="inherit"
+            style={{ backgroundColor: playMode === 'repeat' ? 'rgba(150, 74, 77, 0.3)' : '' }}
+            onClick={handleChangeRepeatMode}
+          >
             <RepeattIcon />
           </IconButton>
         </div>
