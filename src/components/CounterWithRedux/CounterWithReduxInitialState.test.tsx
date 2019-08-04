@@ -11,7 +11,6 @@ import {
 import '@testing-library/jest-dom/extend-expect'; // eslint-disable-line import/no-extraneous-dependencies
 import CounterWithRedux from './CounterWithRedux';
 import counterReducer from '../../reducers/counter/counter';
-import { storeTypes } from '../../reducers/configureStore';
 
 interface StoreTypes {
   counterReducer: {

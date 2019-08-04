@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import random from 'lodash/random';
 import shuffle from 'lodash/shuffle';
@@ -143,8 +143,8 @@ export default function AudioContainer(props: PropsI): JSX.Element {
           Math.floor((event.target as HTMLMediaElement).duration),
         );
 
-        // 廣告隨機跳
-        const pandoraBox = random(0, 4);
+        // 廣告隨機跳 六分之一
+        const pandoraBox = random(0, 5);
         if (!pandoraBox) {
           setAlertDialogOpen(true);
         }
