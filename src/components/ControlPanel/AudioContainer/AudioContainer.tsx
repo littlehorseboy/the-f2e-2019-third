@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import shuffle from 'lodash/shuffle';
 import { makeStyles } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import ShuffleIcon from '@material-ui/icons/Shuffle';
@@ -9,7 +10,7 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import SkipNextIcon from '@material-ui/icons/SkipNext';
 import RepeattIcon from '@material-ui/icons/Repeat';
 import { storeTypes } from '../../../reducers/configureStore';
-import { SongsI } from '../../../reducers/songs/songs';
+import { SongsI, SongI } from '../../../reducers/songs/songs';
 import { audioPlay, audioStop } from '../../../actions/audio/audio';
 import { setCurrentSongId } from '../../../actions/songs/songs';
 
@@ -36,16 +37,25 @@ interface PropsI {
 export default function AudioContainer(props: PropsI): JSX.Element {
   const classes = useStyles();
 
-  const [playMode, setPlayMode] = useState<'classic' | 'shuffle' | 'repeat'>('classic');
+  const dispatch = useDispatch();
+
+  const playMode = useRef<'classic' | 'shuffle' | 'repeat'>('classic');
 
   const previousCurrentSongIdRef = useRef<null | number>(null);
   const nextCurrentSongIdRef = useRef<null | number>(null);
 
-  const dispatch = useDispatch();
-
   const audioEl = useRef<HTMLAudioElement | null>(null);
-
   // (window as any).audioEl = audioEl;
+
+  const songs = useSelector((
+    state: storeTypes,
+  ): SongsI => state.songsReducer);
+
+  const currentId = useRef<number | null>(null);
+
+  useEffect((): void => {
+    currentId.current = songs.currentSongId;
+  }, [songs.currentSongId]);
 
   useEffect((): void => {
     if (audioEl) {
@@ -59,38 +69,65 @@ export default function AudioContainer(props: PropsI): JSX.Element {
     }
   }, [props.muted]);
 
-  const songs = useSelector((
-    state: storeTypes,
-  ): SongsI => state.songsReducer);
 
   const setNextAndPreviousSongId = (): void => {
     if (songs.currentSongId) {
       const findSong = songs.songs
         .find((song): boolean => song.songId === songs.currentSongId);
 
-      // 填下一首的 songId 進 nextCurrentSongIdRef
-      let findNextSong = songs.songs
-        .filter((song): boolean => song.albumId === songs.currentAlbumId)
-        .find((song): boolean => song.songId === (findSong ? findSong.songId + 1 : null));
-      if (!findNextSong) {
-        [findNextSong] = songs.songs
-          .filter((song): boolean => song.albumId === songs.currentAlbumId);
-      }
+      if (playMode.current === 'classic' || playMode.current === 'repeat') {
+        // 填下一首的 songId 進 nextCurrentSongIdRef
+        let findNextSong = songs.songs
+          .filter((song): boolean => song.albumId === songs.currentAlbumId)
+          .find((song): boolean => song.songId === (findSong ? findSong.songId + 1 : null));
+        if (!findNextSong) {
+          [findNextSong] = songs.songs
+            .filter((song): boolean => song.albumId === songs.currentAlbumId);
+        }
 
-      if (findNextSong) {
-        nextCurrentSongIdRef.current = findNextSong.songId;
-      }
+        if (findNextSong) {
+          nextCurrentSongIdRef.current = findNextSong.songId;
+        }
 
-      // 填上一首的 songId 進 previousCurrentSongIdRef
-      let findPreviousSong = songs.songs
-        .filter((song): boolean => song.albumId === songs.currentAlbumId)
-        .find((song): boolean => song.songId === (findSong ? findSong.songId + -1 : null));
-      if (!findPreviousSong) {
-        [findPreviousSong] = songs.songs.slice(-1);
-      }
+        // 填上一首的 songId 進 previousCurrentSongIdRef
+        let findPreviousSong = songs.songs
+          .filter((song): boolean => song.albumId === songs.currentAlbumId)
+          .find((song): boolean => song.songId === (findSong ? findSong.songId + -1 : null));
+        if (!findPreviousSong) {
+          [findPreviousSong] = songs.songs.slice(-1);
+        }
 
-      if (findPreviousSong) {
-        previousCurrentSongIdRef.current = findPreviousSong.songId;
+        if (findPreviousSong) {
+          previousCurrentSongIdRef.current = findPreviousSong.songId;
+        }
+      } else if (playMode.current === 'shuffle') {
+        // 填下一首的 songId 進 nextCurrentSongIdRef
+        const filterSongs = songs.songs
+          .filter((song): boolean => song.albumId === songs.currentAlbumId
+            && song.songId !== songs.currentSongId);
+        if (filterSongs.length > 1) {
+          const findNextSong = (shuffle(filterSongs) as SongI[])
+            .find((song: SongI): SongI => song);
+
+          if (findNextSong) {
+            nextCurrentSongIdRef.current = findNextSong.songId;
+          }
+        }
+
+        // 填上一首的 songId 進 previousCurrentSongIdRef
+        if (filterSongs.length > 1) {
+          const filterSongsOneMoreTime = filterSongs
+            .filter((song): boolean => song.songId !== nextCurrentSongIdRef.current);
+
+          if (filterSongsOneMoreTime) {
+            const findPreviousSong = (shuffle(filterSongsOneMoreTime) as SongI[])
+              .find((song: SongI): SongI => song);
+
+            if (findPreviousSong) {
+              previousCurrentSongIdRef.current = findPreviousSong.songId;
+            }
+          }
+        }
       }
     }
   };
@@ -111,7 +148,12 @@ export default function AudioContainer(props: PropsI): JSX.Element {
         dispatch(audioStop());
         if (nextCurrentSongIdRef.current) {
           setTimeout((): void => {
-            dispatch(setCurrentSongId(nextCurrentSongIdRef.current as number));
+            setNextAndPreviousSongId();
+            if (playMode.current === 'repeat') {
+              dispatch(setCurrentSongId(currentId.current as number));
+            } else {
+              dispatch(setCurrentSongId(nextCurrentSongIdRef.current as number));
+            }
             dispatch(audioPlay());
           }, 500);
         }
@@ -165,6 +207,7 @@ export default function AudioContainer(props: PropsI): JSX.Element {
         }, 300);
       }
       dispatch(audioStop());
+      setNextAndPreviousSongId();
       dispatch(setCurrentSongId(previousCurrentSongIdRef.current as number));
     }
   };
@@ -177,23 +220,24 @@ export default function AudioContainer(props: PropsI): JSX.Element {
         }, 300);
       }
       dispatch(audioStop());
+      setNextAndPreviousSongId();
       dispatch(setCurrentSongId(nextCurrentSongIdRef.current as number));
     }
   };
 
   const handleChangeShuffleMode = (): void => {
-    if (playMode === 'shuffle') {
-      setPlayMode('classic');
+    if (playMode.current === 'shuffle') {
+      playMode.current = 'classic';
     } else {
-      setPlayMode('shuffle');
+      playMode.current = 'shuffle';
     }
   };
 
   const handleChangeRepeatMode = (): void => {
-    if (playMode === 'repeat') {
-      setPlayMode('classic');
+    if (playMode.current === 'repeat') {
+      playMode.current = 'classic';
     } else {
-      setPlayMode('repeat');
+      playMode.current = 'repeat';
     }
   };
 
@@ -207,7 +251,7 @@ export default function AudioContainer(props: PropsI): JSX.Element {
         <div>
           <IconButton
             color="inherit"
-            style={{ backgroundColor: playMode === 'shuffle' ? 'rgba(150, 74, 77, 0.3)' : '' }}
+            style={{ backgroundColor: playMode.current === 'shuffle' ? 'rgba(150, 74, 77, 0.3)' : '' }}
             onClick={handleChangeShuffleMode}
           >
             <ShuffleIcon />
@@ -227,7 +271,7 @@ export default function AudioContainer(props: PropsI): JSX.Element {
           </IconButton>
           <IconButton
             color="inherit"
-            style={{ backgroundColor: playMode === 'repeat' ? 'rgba(150, 74, 77, 0.3)' : '' }}
+            style={{ backgroundColor: playMode.current === 'repeat' ? 'rgba(150, 74, 77, 0.3)' : '' }}
             onClick={handleChangeRepeatMode}
           >
             <RepeattIcon />

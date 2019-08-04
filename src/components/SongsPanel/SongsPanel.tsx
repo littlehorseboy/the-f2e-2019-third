@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -11,8 +13,10 @@ import TableRow from '@material-ui/core/TableRow';
 import MusicNoteIcon from '@material-ui/icons/MusicNote';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
-
-const songPhoto = require('../../assets/images/Ed_Sheeran_-_No._6_Collaborations_Project.png'); // eslint-disable-line @typescript-eslint/no-var-requires
+import { storeTypes } from '../../reducers/configureStore';
+import { SongsI } from '../../reducers/songs/songs';
+import { audioPlay, audioStop } from '../../actions/audio/audio';
+import { setCurrentSongId } from '../../actions/songs/songs';
 
 const useStyles = makeStyles({
   songsPanel: {
@@ -59,11 +63,14 @@ const useStyles = makeStyles({
   },
   songList: {
     '& th, td': {
-      borderBottom: '1px solid #707070',
+      borderBottom: '1px solid rgba(255, 225, 255, 0.1)',
     },
   },
   tableRow: {
     cursor: 'pointer',
+    '&.current': {
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    },
   },
   colorWhite: {
     color: '#FFFFFF',
@@ -73,24 +80,48 @@ const useStyles = makeStyles({
 export default function SongsPanel(): JSX.Element {
   const classes = useStyles();
 
+  const dispatch = useDispatch();
+
   const [albumLiked, setAlbumLiked] = useState(false);
+
+  const songs = useSelector((
+    state: storeTypes,
+  ): SongsI => state.songsReducer);
+
+  const album = songs.album
+    .find((albumObj): boolean => albumObj.albumId === songs.currentAlbumId);
+
+  const songsInAlbum = songs.songs
+    .filter((song): boolean => song.albumId === (album ? album.albumId : null));
+
+  const handlePlayFirstSong = (): void => {
+    dispatch(audioPlay());
+  };
 
   const handleAlbumLikeClick = (): void => {
     setAlbumLiked(!albumLiked);
+  };
+
+  const handleClickSetCurrentSongId = (songId: number): void => {
+    dispatch(audioStop());
+    dispatch(setCurrentSongId(songId));
+    setTimeout((): void => {
+      dispatch(audioPlay());
+    }, 300);
   };
 
   return (
     <div className={classes.songsPanel}>
       <div className={classes.songTitle}>
         <div>
-          <img src={songPhoto} alt="songPhoto" className={classes.songPhoto} />
+          <img src={album ? album.albumPhotoPath : ''} alt="songPhoto" className={classes.songPhoto} />
         </div>
         <div className={classes.songTitleContent}>
           <div>2019</div>
-          <div>No.6 Collaborations Project</div>
+          <div>{album ? album.albumName : ''}</div>
           <div>
             <div>
-              <Button variant="contained" color="primary">PLAY</Button>
+              <Button variant="contained" color="primary" onClick={handlePlayFirstSong}>PLAY</Button>
             </div>
             <div>
               <IconButton color="inherit" onClick={handleAlbumLikeClick}>
@@ -120,142 +151,35 @@ export default function SongsPanel(): JSX.Element {
               </TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
-            <TableRow hover className={classes.tableRow}>
-              <TableCell className={classes.colorWhite} align="left">
-                <MusicNoteIcon color="primary" />
-              </TableCell>
-              <TableCell className={classes.colorWhite} align="left">1</TableCell>
-              <TableCell className={classes.colorWhite} align="left">Beautiful People (featuring Khalid)</TableCell>
-              <TableCell className={classes.colorWhite} align="center">fat</TableCell>
-              <TableCell className={classes.colorWhite} align="center">carbs</TableCell>
-            </TableRow>
-            <TableRow hover className={classes.tableRow}>
-              <TableCell className={classes.colorWhite} align="left">
-                <MusicNoteIcon color="primary" />
-              </TableCell>
-              <TableCell className={classes.colorWhite} align="left">1</TableCell>
-              <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-              <TableCell className={classes.colorWhite} align="center">fat</TableCell>
-              <TableCell className={classes.colorWhite} align="center">carbs</TableCell>
-            </TableRow>
-            <TableRow hover className={classes.tableRow}>
-              <TableCell className={classes.colorWhite} align="left">
-                <MusicNoteIcon color="primary" />
-              </TableCell>
-              <TableCell className={classes.colorWhite} align="left">1</TableCell>
-              <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-              <TableCell className={classes.colorWhite} align="center">fat</TableCell>
-              <TableCell className={classes.colorWhite} align="center">carbs</TableCell>
-            </TableRow>
-            <TableRow hover className={classes.tableRow}>
-              <TableCell className={classes.colorWhite} align="left">
-                <MusicNoteIcon color="primary" />
-              </TableCell>
-              <TableCell className={classes.colorWhite} align="left">1</TableCell>
-              <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-              <TableCell className={classes.colorWhite} align="center">fat</TableCell>
-              <TableCell className={classes.colorWhite} align="center">carbs</TableCell>
-            </TableRow>
-            <TableRow hover className={classes.tableRow}>
-              <TableCell className={classes.colorWhite} align="left">
-                <MusicNoteIcon color="primary" />
-              </TableCell>
-              <TableCell className={classes.colorWhite} align="left">1</TableCell>
-              <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-              <TableCell className={classes.colorWhite} align="center">fat</TableCell>
-              <TableCell className={classes.colorWhite} align="center">carbs</TableCell>
-            </TableRow>
-            <TableRow hover className={classes.tableRow}>
-              <TableCell className={classes.colorWhite} align="left">
-                <MusicNoteIcon color="primary" />
-              </TableCell>
-              <TableCell className={classes.colorWhite} align="left">1</TableCell>
-              <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-              <TableCell className={classes.colorWhite} align="center">fat</TableCell>
-              <TableCell className={classes.colorWhite} align="center">carbs</TableCell>
-            </TableRow>
-            <TableRow hover className={classes.tableRow}>
-              <TableCell className={classes.colorWhite} align="left">
-                <MusicNoteIcon color="primary" />
-              </TableCell>
-              <TableCell className={classes.colorWhite} align="left">1</TableCell>
-              <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-              <TableCell className={classes.colorWhite} align="center">fat</TableCell>
-              <TableCell className={classes.colorWhite} align="center">carbs</TableCell>
-            </TableRow>
-            <TableRow hover className={classes.tableRow}>
-              <TableCell className={classes.colorWhite} align="left">
-                <MusicNoteIcon color="primary" />
-              </TableCell>
-              <TableCell className={classes.colorWhite} align="left">1</TableCell>
-              <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-              <TableCell className={classes.colorWhite} align="center">fat</TableCell>
-              <TableCell className={classes.colorWhite} align="center">carbs</TableCell>
-            </TableRow>
-            <TableRow hover className={classes.tableRow}>
-              <TableCell className={classes.colorWhite} align="left">
-                <MusicNoteIcon color="primary" />
-              </TableCell>
-              <TableCell className={classes.colorWhite} align="left">1</TableCell>
-              <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-              <TableCell className={classes.colorWhite} align="center">fat</TableCell>
-              <TableCell className={classes.colorWhite} align="center">carbs</TableCell>
-            </TableRow>
-            <TableRow hover className={classes.tableRow}>
-              <TableCell className={classes.colorWhite} align="left">
-                <MusicNoteIcon color="primary" />
-              </TableCell>
-              <TableCell className={classes.colorWhite} align="left">1</TableCell>
-              <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-              <TableCell className={classes.colorWhite} align="center">fat</TableCell>
-              <TableCell className={classes.colorWhite} align="center">carbs</TableCell>
-            </TableRow>
-            <TableRow hover className={classes.tableRow}>
-              <TableCell className={classes.colorWhite} align="left">
-                <MusicNoteIcon color="primary" />
-              </TableCell>
-              <TableCell className={classes.colorWhite} align="left">1</TableCell>
-              <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-              <TableCell className={classes.colorWhite} align="center">fat</TableCell>
-              <TableCell className={classes.colorWhite} align="center">carbs</TableCell>
-            </TableRow>
-            <TableRow hover className={classes.tableRow}>
-              <TableCell className={classes.colorWhite} align="left">
-                <MusicNoteIcon color="primary" />
-              </TableCell>
-              <TableCell className={classes.colorWhite} align="left">1</TableCell>
-              <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-              <TableCell className={classes.colorWhite} align="center">fat</TableCell>
-              <TableCell className={classes.colorWhite} align="center">carbs</TableCell>
-            </TableRow>
-            <TableRow hover className={classes.tableRow}>
-              <TableCell className={classes.colorWhite} align="left">
-                <MusicNoteIcon color="primary" />
-              </TableCell>
-              <TableCell className={classes.colorWhite} align="left">1</TableCell>
-              <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-              <TableCell className={classes.colorWhite} align="center">fat</TableCell>
-              <TableCell className={classes.colorWhite} align="center">carbs</TableCell>
-            </TableRow>
-            <TableRow hover className={classes.tableRow}>
-              <TableCell className={classes.colorWhite} align="left">
-                <MusicNoteIcon color="primary" />
-              </TableCell>
-              <TableCell className={classes.colorWhite} align="left">1</TableCell>
-              <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-              <TableCell className={classes.colorWhite} align="center">fat</TableCell>
-              <TableCell className={classes.colorWhite} align="center">carbs</TableCell>
-            </TableRow>
-            <TableRow hover className={classes.tableRow}>
-              <TableCell className={classes.colorWhite} align="left">
-                <MusicNoteIcon color="primary" />
-              </TableCell>
-              <TableCell className={classes.colorWhite} align="left">1</TableCell>
-              <TableCell className={classes.colorWhite} align="left">calories</TableCell>
-              <TableCell className={classes.colorWhite} align="center">fat</TableCell>
-              <TableCell className={classes.colorWhite} align="center">carbs</TableCell>
-            </TableRow>
+            {songsInAlbum.map((song, index): JSX.Element => (
+              <TableRow
+                key={song.songId}
+                hover
+                className={classNames(
+                  classes.tableRow,
+                  { current: song.songId === songs.currentSongId },
+                )}
+                onClick={(): void => handleClickSetCurrentSongId(song.songId)}>
+                <TableCell className={classes.colorWhite} align="left">
+                  <MusicNoteIcon color="primary" />
+                </TableCell>
+                <TableCell className={classes.colorWhite} align="left" style={{ fontSize: 16 }}>
+                  {index + 1}
+                </TableCell>
+                <TableCell className={classes.colorWhite} align="left" style={{ fontSize: 20 }}>
+                  {song.songName}
+                </TableCell>
+                <TableCell className={classes.colorWhite} align="center">{song.songLength}</TableCell>
+                <TableCell className={classes.colorWhite} align="center">
+                  {(song.followers).toLocaleString()}
+                  <IconButton color="inherit" style={{ padding: 4, marginLeft: 8 }}>
+                    <FavoriteBorderIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </div>

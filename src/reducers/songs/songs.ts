@@ -25,6 +25,8 @@ export interface SongI {
   songId: number;
   songName: string;
   path: string;
+  songLength: string;
+  followers: number;
   albumId: number;
 }
 

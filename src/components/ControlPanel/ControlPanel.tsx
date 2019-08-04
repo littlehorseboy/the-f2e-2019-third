@@ -11,8 +11,6 @@ import AudioContainer from './AudioContainer/AudioContainer';
 import { storeTypes } from '../../reducers/configureStore';
 import { SongsI } from '../../reducers/songs/songs';
 
-const songPhoto = require('../../assets/images/Ed_Sheeran_-_No._6_Collaborations_Project.png'); // eslint-disable-line @typescript-eslint/no-var-requires
-
 // #region PlaybackProgressBar
 const PlaybackProgressBar = withStyles({
   root: {
@@ -118,7 +116,7 @@ export default function ControlPanel(): JSX.Element {
   const [sliderChangeProgressValue, setSliderChangeProgressValue] = useState<number | number[]>(0);
   const [playbackProgressValue, setPlaybackProgressValue] = useState<number | number[]>(0);
   const [playbackProgressMaxValue, setPlaybackProgressMaxValue] = useState<number | number[]>(0);
-  const [volumeValue, setVolumeValue] = useState<number | number[]>(0.5);
+  const [volumeValue, setVolumeValue] = useState<number | number[]>(0.7);
   const [muted, setMuted] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
 
@@ -189,7 +187,7 @@ export default function ControlPanel(): JSX.Element {
       </div>
       <div className={classes.playerContainer}>
         <div className={classes.playerTitleContainer}>
-          <img src={songPhoto} alt="songPhoto" />
+          <img src={findAlbum ? findAlbum.albumPhotoPath : ''} alt="songPhoto" />
           <div>
             <div>{findSong ? findSong.songName : ''}</div>
             <div>{findArtist ? findArtist.artistName : ''}</div>
