@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import random from 'lodash/random';
 import shuffle from 'lodash/shuffle';
 import { makeStyles } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
@@ -13,6 +14,7 @@ import { storeTypes } from '../../../reducers/configureStore';
 import { SongsI, SongI } from '../../../reducers/songs/songs';
 import { audioPlay, audioStop } from '../../../actions/audio/audio';
 import { setCurrentSongId } from '../../../actions/songs/songs';
+import AlertDialog from './AlertDialog/AlertDialog';
 
 const useStyles = makeStyles({
   root: {
@@ -36,6 +38,8 @@ interface PropsI {
 
 export default function AudioContainer(props: PropsI): JSX.Element {
   const classes = useStyles();
+
+  const [alertDialogOpen, setAlertDialogOpen] = React.useState(false);
 
   const dispatch = useDispatch();
 
@@ -138,6 +142,12 @@ export default function AudioContainer(props: PropsI): JSX.Element {
         props.setPlaybackProgressMaxValue(
           Math.floor((event.target as HTMLMediaElement).duration),
         );
+
+        // 廣告隨機跳
+        const pandoraBox = random(0, 4);
+        if (!pandoraBox) {
+          setAlertDialogOpen(true);
+        }
       });
       (audioEl.current as HTMLAudioElement).addEventListener('timeupdate', (event): void => {
         props.setPlaybackProgressValue(
@@ -278,6 +288,8 @@ export default function AudioContainer(props: PropsI): JSX.Element {
           </IconButton>
         </div>
       </div>
+
+      <AlertDialog open={alertDialogOpen} setOpen={setAlertDialogOpen} />
     </>
   );
 }
