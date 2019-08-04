@@ -11,6 +11,8 @@ describe('AudioContainer.tsx', (): void => {
       sliderChangeProgressValue={0}
       setPlaybackProgressValue={jest.fn()}
       setPlaybackProgressMaxValue={jest.fn()}
+      volumeValue={0}
+      muted={false}
     />);
     expect((getByTestId('audio') as HTMLAudioElement).tagName === 'AUDIO');
   });
@@ -20,6 +22,8 @@ describe('AudioContainer.tsx', (): void => {
       sliderChangeProgressValue={0}
       setPlaybackProgressValue={jest.fn()}
       setPlaybackProgressMaxValue={jest.fn()}
+      volumeValue={0}
+      muted={false}
     />);
     expect((getByTestId('audio') as HTMLAudioElement).autoplay === false);
   });
@@ -29,6 +33,8 @@ describe('AudioContainer.tsx', (): void => {
       sliderChangeProgressValue={0}
       setPlaybackProgressValue={jest.fn()}
       setPlaybackProgressMaxValue={jest.fn()}
+      volumeValue={0}
+      muted={false}
     />);
     expect((getByTestId('audio') as HTMLAudioElement).innerHTML.includes('<track kind="captions"'));
   });
@@ -38,6 +44,8 @@ describe('AudioContainer.tsx', (): void => {
       sliderChangeProgressValue={0}
       setPlaybackProgressValue={jest.fn()}
       setPlaybackProgressMaxValue={jest.fn()}
+      volumeValue={0}
+      muted={false}
     />);
     expect((getByTestId('audio') as HTMLAudioElement)).toBeInTheDocument();
   });

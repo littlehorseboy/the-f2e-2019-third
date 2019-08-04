@@ -3,6 +3,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Slider from '@material-ui/core/Slider';
 import VolumeUpIcon from '@material-ui/icons/VolumeUp';
+import VolumeOffIcon from '@material-ui/icons/VolumeOff';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 import AudioContainer from './AudioContainer/AudioContainer';
 
@@ -110,7 +111,8 @@ export default function ControlPanel(): JSX.Element {
   const [sliderChangeProgressValue, setSliderChangeProgressValue] = useState<number | number[]>(0);
   const [playbackProgressValue, setPlaybackProgressValue] = useState<number | number[]>(0);
   const [playbackProgressMaxValue, setPlaybackProgressMaxValue] = useState<number | number[]>(0);
-  const [volumeValue, setVolumeValue] = useState<number | number[]>(30);
+  const [volumeValue, setVolumeValue] = useState<number | number[]>(0.5);
+  const [muted, setMuted] = useState(false);
 
   const handlePlaybackProgressSliderChange = (
     event: React.ChangeEvent<{}>,
@@ -131,6 +133,10 @@ export default function ControlPanel(): JSX.Element {
     newValue: number | number[],
   ): void => {
     setVolumeValue(newValue);
+  };
+
+  const handleChangeMuted = (): void => {
+    setMuted(!muted);
   };
 
   return (
@@ -169,18 +175,22 @@ export default function ControlPanel(): JSX.Element {
           sliderChangeProgressValue={sliderChangeProgressValue as number}
           setPlaybackProgressValue={setPlaybackProgressValue}
           setPlaybackProgressMaxValue={setPlaybackProgressMaxValue}
+          volumeValue={volumeValue as number}
+          muted={muted}
         />
 
         <div className={classes.volumeContainer}>
           <div>
-            <IconButton aria-label="Dashboard" color="inherit">
-              <VolumeUpIcon />
+            <IconButton aria-label="Dashboard" color="inherit" onClick={handleChangeMuted}>
+              {!muted ? <VolumeUpIcon /> : <VolumeOffIcon />}
             </IconButton>
           </div>
 
           <div className={classes.volumeSliderContainer}>
             <VolumeSlider
               value={volumeValue}
+              max={1}
+              step={0.05}
               onChange={handleVolumeSliderChange}
               aria-labelledby="continuous-slider"
             />

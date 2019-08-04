@@ -29,6 +29,8 @@ interface PropsI {
   sliderChangeProgressValue: number;
   setPlaybackProgressValue: React.Dispatch<React.SetStateAction<number | number[]>>;
   setPlaybackProgressMaxValue: React.Dispatch<React.SetStateAction<number | number[]>>;
+  volumeValue: number;
+  muted: boolean;
 }
 
 export default function AudioContainer(props: PropsI): JSX.Element {
@@ -42,6 +44,18 @@ export default function AudioContainer(props: PropsI): JSX.Element {
   const audioEl = useRef<HTMLAudioElement | null>(null);
 
   (window as any).audioEl = audioEl;
+
+  useEffect((): void => {
+    if (audioEl) {
+      (audioEl.current as HTMLAudioElement).volume = props.volumeValue;
+    }
+  }, [props.volumeValue]);
+
+  useEffect((): void => {
+    if (audioEl) {
+      (audioEl.current as HTMLAudioElement).muted = props.muted;
+    }
+  }, [props.muted]);
 
   useEffect((): void => {
     if (audioEl) {
