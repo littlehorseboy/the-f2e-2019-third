@@ -107,6 +107,7 @@ const useStyles = makeStyles({
 export default function ControlPanel(): JSX.Element {
   const classes = useStyles();
 
+  const [sliderChangeProgressValue, setSliderChangeProgressValue] = useState<number | number[]>(0);
   const [playbackProgressValue, setPlaybackProgressValue] = useState<number | number[]>(0);
   const [playbackProgressMaxValue, setPlaybackProgressMaxValue] = useState<number | number[]>(0);
   const [volumeValue, setVolumeValue] = useState<number | number[]>(30);
@@ -116,6 +117,13 @@ export default function ControlPanel(): JSX.Element {
     newValue: number | number[],
   ): void => {
     setPlaybackProgressValue(newValue);
+  };
+
+  const handlePlaybackProgressSliderChangeCommitted = (
+    event: React.ChangeEvent<{}>,
+    newValue: number | number[],
+  ): void => {
+    setSliderChangeProgressValue(newValue);
   };
 
   const handleVolumeSliderChange = (
@@ -133,6 +141,7 @@ export default function ControlPanel(): JSX.Element {
           value={playbackProgressValue}
           max={playbackProgressMaxValue as number}
           onChange={handlePlaybackProgressSliderChange}
+          onChangeCommitted={handlePlaybackProgressSliderChangeCommitted}
         />
       </div>
       <div className={classes.progressTimeText}>
@@ -157,6 +166,7 @@ export default function ControlPanel(): JSX.Element {
         </div>
 
         <AudioContainer
+          sliderChangeProgressValue={sliderChangeProgressValue as number}
           setPlaybackProgressValue={setPlaybackProgressValue}
           setPlaybackProgressMaxValue={setPlaybackProgressMaxValue}
         />

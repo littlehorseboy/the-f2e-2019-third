@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
@@ -11,6 +11,7 @@ import RepeattIcon from '@material-ui/icons/Repeat';
 import { storeTypes } from '../../../reducers/configureStore';
 import { SongsI } from '../../../reducers/songs/songs';
 import { audioPlay, audioStop } from '../../../actions/audio/audio';
+import { setCurrentSongId } from '../../../actions/songs/songs';
 
 const useStyles = makeStyles({
   root: {
@@ -25,6 +26,7 @@ const useStyles = makeStyles({
 });
 
 interface PropsI {
+  sliderChangeProgressValue: number;
   setPlaybackProgressValue: React.Dispatch<React.SetStateAction<number | number[]>>;
   setPlaybackProgressMaxValue: React.Dispatch<React.SetStateAction<number | number[]>>;
 }
@@ -32,7 +34,14 @@ interface PropsI {
 export default function AudioContainer(props: PropsI): JSX.Element {
   const classes = useStyles();
 
+  const previousCurrentSongIdRef = useRef<null | number>(null);
+  const nextCurrentSongIdRef = useRef<null | number>(null);
+
+  const dispatch = useDispatch();
+
   const audioEl = useRef<HTMLAudioElement | null>(null);
+
+  (window as any).audioEl = audioEl;
 
   useEffect((): void => {
     if (audioEl) {
@@ -46,8 +55,23 @@ export default function AudioContainer(props: PropsI): JSX.Element {
           Math.floor((event.target as HTMLMediaElement).currentTime),
         );
       });
+      (audioEl.current as HTMLAudioElement).addEventListener('ended', (): void => {
+        dispatch(audioStop());
+        if (nextCurrentSongIdRef.current) {
+          setTimeout((): void => {
+            dispatch(setCurrentSongId(nextCurrentSongIdRef.current as number));
+            dispatch(audioPlay());
+          }, 500);
+        }
+      });
     }
   }, [audioEl]);
+
+  useEffect((): void => {
+    if (audioEl) {
+      (audioEl.current as HTMLAudioElement).currentTime = props.sliderChangeProgressValue;
+    }
+  }, [props.sliderChangeProgressValue]);
 
   const songs = useSelector((
     state: storeTypes,
@@ -72,16 +96,63 @@ export default function AudioContainer(props: PropsI): JSX.Element {
       const findSong = songs.songs
         .find((song): boolean => song.songId === songs.currentSongId);
       (audioEl.current as HTMLAudioElement).src = findSong ? findSong.path : '';
+
+      // 填下一首的 songId 進 nextCurrentSongIdRef
+      let findNextSong = songs.songs
+        .filter((song): boolean => song.albumId === songs.currentAlbumId)
+        .find((song): boolean => song.songId === (findSong ? findSong.songId + 1 : null));
+      if (!findNextSong) {
+        [findNextSong] = songs.songs
+          .filter((song): boolean => song.albumId === songs.currentAlbumId);
+      }
+
+      if (findNextSong) {
+        nextCurrentSongIdRef.current = findNextSong.songId;
+      }
+
+      // 填上一首的 songId 進 previousCurrentSongIdRef
+      let findPreviousSong = songs.songs
+        .filter((song): boolean => song.albumId === songs.currentAlbumId)
+        .find((song): boolean => song.songId === (findSong ? findSong.songId + -1 : null));
+      if (!findPreviousSong) {
+        [findPreviousSong] = songs.songs.slice(-1);
+      }
+
+      if (findPreviousSong) {
+        previousCurrentSongIdRef.current = findPreviousSong.songId;
+      }
     }
   }, [songs.currentSongId]);
-
-  const dispatch = useDispatch();
 
   const hanldePlayOrPauseClick = (): void => {
     if (audioStatus === 'playing') {
       dispatch(audioStop());
     } else if (audioStatus === 'stopped') {
       dispatch(audioPlay());
+    }
+  };
+
+  const handleSkipPreviousSong = (): void => {
+    if (previousCurrentSongIdRef.current) {
+      if (audioStatus === 'playing') {
+        setTimeout((): void => {
+          dispatch(audioPlay());
+        }, 300);
+      }
+      dispatch(audioStop());
+      dispatch(setCurrentSongId(previousCurrentSongIdRef.current as number));
+    }
+  };
+
+  const handleSkipNextSong = (): void => {
+    if (nextCurrentSongIdRef.current) {
+      if (audioStatus === 'playing') {
+        setTimeout((): void => {
+          dispatch(audioPlay());
+        }, 300);
+      }
+      dispatch(audioStop());
+      dispatch(setCurrentSongId(nextCurrentSongIdRef.current as number));
     }
   };
 
@@ -96,7 +167,7 @@ export default function AudioContainer(props: PropsI): JSX.Element {
           <IconButton color="inherit">
             <ShuffleIcon />
           </IconButton>
-          <IconButton color="inherit">
+          <IconButton color="inherit" onClick={handleSkipPreviousSong}>
             <SkipPreviousIcon />
           </IconButton>
 
@@ -106,7 +177,7 @@ export default function AudioContainer(props: PropsI): JSX.Element {
               : <PlayArrowIcon />}
           </IconButton>
 
-          <IconButton color="inherit">
+          <IconButton color="inherit" onClick={handleSkipNextSong}>
             <SkipNextIcon />
           </IconButton>
           <IconButton color="inherit">

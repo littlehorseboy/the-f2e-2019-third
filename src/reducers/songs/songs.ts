@@ -20,7 +20,7 @@ interface AlbumI {
   released: Date;
   artistId: number;
 }
-interface SongI {
+export interface SongI {
   songId: number;
   songName: string;
   path: string;

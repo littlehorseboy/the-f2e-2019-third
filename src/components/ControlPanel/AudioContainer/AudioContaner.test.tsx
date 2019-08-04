@@ -8,6 +8,7 @@ describe('AudioContainer.tsx', (): void => {
 
   test('<audio> tagName === "AUDIO"', (): void => {
     const { getByTestId } = render(<AudioContainer
+      sliderChangeProgressValue={0}
       setPlaybackProgressValue={jest.fn()}
       setPlaybackProgressMaxValue={jest.fn()}
     />);
@@ -16,6 +17,7 @@ describe('AudioContainer.tsx', (): void => {
 
   test('<audio> autoplay === false', (): void => {
     const { getByTestId } = render(<AudioContainer
+      sliderChangeProgressValue={0}
       setPlaybackProgressValue={jest.fn()}
       setPlaybackProgressMaxValue={jest.fn()}
     />);
@@ -24,6 +26,7 @@ describe('AudioContainer.tsx', (): void => {
 
   test('<audio> includes <track kind="captions"', (): void => {
     const { getByTestId } = render(<AudioContainer
+      sliderChangeProgressValue={0}
       setPlaybackProgressValue={jest.fn()}
       setPlaybackProgressMaxValue={jest.fn()}
     />);
@@ -32,6 +35,7 @@ describe('AudioContainer.tsx', (): void => {
 
   test('<audio> toBeInTheDocument', (): void => {
     const { getByTestId } = render(<AudioContainer
+      sliderChangeProgressValue={0}
       setPlaybackProgressValue={jest.fn()}
       setPlaybackProgressMaxValue={jest.fn()}
     />);
